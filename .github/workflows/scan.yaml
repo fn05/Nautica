@@ -3,7 +3,7 @@ name: Proxy Scanner
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */6 * * *"
+    - cron: "* */6 * * *"
 
 jobs:
   scanner:
@@ -22,9 +22,10 @@ jobs:
           bun install && bun run ./helper/proxyip.ts
       - name: Publish Result
         if: ${{ success() }}
-        run: |
-          git config --global user.name "Github Actions"
-          git config --global user.email "actions@github.com"
-          git add .
-          git commit -m "Update proxyip"
-          git push origin main --force
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: '["./*List.txt", "./*List.json"]'
+          default_author: github_actions
+          fetch: true
+          tag_push: "--force"
+          message: "Update proxy list"
